@@ -2,6 +2,7 @@ package prices
 
 import (
 	"fmt"
+	"time"
 
 	"example.com/price-calculator/conversion"
 	"example.com/price-calculator/filemanager"
@@ -32,8 +33,10 @@ func (job *TaxIncludedPriceJob) LoadData() {
 	job.InputPrices = prices
 }
 
-func (job *TaxIncludedPriceJob) Process() {
+func (job *TaxIncludedPriceJob) Process(doneChan chan bool) {
 	job.LoadData()
+
+	time.Sleep(3 * time.Second)
 
 	result := make(map[string]string)
 	for _, price := range job.InputPrices {
@@ -43,11 +46,9 @@ func (job *TaxIncludedPriceJob) Process() {
 
 	job.TaxIncludedPrices = result
 
-	err := job.IOManager.WriteResult(job)
+	job.IOManager.WriteResult(job)
 
-	if err != nil {
-		fmt.Println(err)
-	}
+	doneChan <- true
 }
 
 func New(fm filemanager.FileManager, taxRate float64) *TaxIncludedPriceJob {
