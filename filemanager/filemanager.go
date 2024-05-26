@@ -2,13 +2,14 @@ package filemanager
 
 import (
 	"bufio"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"os"
 )
 
 func ReadLines(path string) ([]string, error) {
-  file, err := os.Open(path)
+	file, err := os.Open(path)
 
 	if err != nil {
 		fmt.Println(err)
@@ -30,7 +31,28 @@ func ReadLines(path string) ([]string, error) {
 		return nil, errors.New("Error reading file")
 	}
 
-  file.Close()
+	file.Close()
 
-  return lines, nil
+	return lines, nil
+}
+
+func WriteJson(path string, data interface{}) error {
+	file, err := os.Create(path)
+
+	if err != nil {
+		return errors.New("Error creating file")
+	}
+
+	encoder := json.NewEncoder(file)
+
+	err = encoder.Encode(data)
+
+	if err != nil {
+		file.Close()
+		return errors.New("Error writing JSON")
+	}
+
+	file.Close()
+
+	return nil
 }
