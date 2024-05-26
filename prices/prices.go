@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"strconv"
 
 	"example.com/price-calculator/conversion"
 )
